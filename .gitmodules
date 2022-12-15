@@ -1,0 +1,3 @@
+[submodule "medium_protos"]
+	path = medium_protos
+	url = git@github.com:nurmuhammaddeveloper/medium_protos.git
