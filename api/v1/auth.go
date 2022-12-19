@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nurmuhammaddeveloper/medium_api_gateway/api/models"
 	pbu "github.com/nurmuhammaddeveloper/medium_api_gateway/genproto/user_service"
+	"google.golang.org/grpc/status"
 )
 
 // @Router /auth/register [post]
@@ -62,7 +63,6 @@ func (h *handlerV1) Register(c *gin.Context) {
 // @Param data body models.VerifyRequest true "Data"
 // @Success 200 {object} models.AuthResponse
 // @Failure 500 {object} models.ErrorResponse
-
 func (h *handlerV1) Verify(ctx *gin.Context) {
 	var (
 		req models.VerifyRequest
@@ -72,6 +72,30 @@ func (h *handlerV1) Verify(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
-	// resulr, err := h.grpcClient.AuthService().Verify()
+	res, err := h.grpcClient.AuthService().Verify(context.Background(), &pbu.VerifyRequest{
+		Email: req.Email,
+		Code:  req.Code,
+	})
+	if err != nil {
+		s, _ := status.FromError(err)
+		if s.Message() == "incorrect_code" {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		} else if s.Message() == "code_expired" {
+			ctx.JSON(http.StatusBadRequest, errorResponse(ErrCodeExpired))
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+	}
+	ctx.JSON(http.StatusCreated, models.AuthResponse{
+		ID:          res.Id,
+		FirstName:   res.FirstName,
+		LastName:    res.LastName,
+		Email:       res.Email,
+		Type:        res.Type,
+		CreatedAt:   res.CreatedAt,
+		AccessToken: res.AccessToken,
+	})
 }

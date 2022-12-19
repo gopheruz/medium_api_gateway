@@ -38,7 +38,7 @@ func New(opt *RouterOptions) *gin.Engine {
 	apiV1 := router.Group("/v1")
 
 	apiV1.POST("/auth/register", handlerV1.Register)
-
+	apiV1.POST("/auth/verify", handlerV1.Verify)
 	apiV1.POST("/users", handlerV1.CreateUser)
 	apiV1.GET("/users/:id", handlerV1.GetUser)
 	apiV1.PUT("/users/:id", handlerV1.UpdateUser)
