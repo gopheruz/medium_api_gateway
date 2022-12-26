@@ -63,6 +63,13 @@ definitions:
       error:
         type: string
     type: object
+  models.ForgotPasswordRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   models.GetAllUsersResponse:
     properties:
       categories:
@@ -71,6 +78,18 @@ definitions:
         type: array
       count:
         type: integer
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 16
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
     type: object
   models.RegisterRequest:
     properties:
@@ -98,6 +117,18 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  models.ResponseSuccess:
+    properties:
+      success:
+        type: string
+    type: object
+  models.UpdatePasswordRequest:
+    properties:
+      password:
+        type: string
+    required:
+    - password
     type: object
   models.UpdateUserRequest:
     properties:
@@ -164,6 +195,58 @@ info:
   title: Swagger for blog api
   version: "1.0"
 paths:
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Forgot  password
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Forgot  password
+      tags:
+      - login
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login User
+      parameters:
+      - description: Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Login User
+      tags:
+      - login
   /auth/register:
     post:
       consumes:
@@ -189,7 +272,35 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Register a user
       tags:
-      - auth
+      - login
+  /auth/update-password:
+    post:
+      consumes:
+      - application/json
+      description: Update password
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update password
+      tags:
+      - login
   /auth/verify:
     post:
       consumes:
@@ -215,7 +326,33 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Verify user
       tags:
-      - auth
+      - login
+  /auth/verify-forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Verify forgot password
+      parameters:
+      - description: Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Verify forgot password
+      tags:
+      - login
   /users:
     get:
       consumes:

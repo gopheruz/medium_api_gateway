@@ -225,3 +225,11 @@ func (h *handlerV1) DeleteUser(c *gin.Context) {
 		Message: "success",
 	})
 }
+
+// func(h *handlerV1)GetProfile(c *gin.Context){
+// 	payload, err := h.GetAuthPayload(c)
+// 	if err != nil{
+// 		c.JSON(http.StatusInternalServerError, errorResponse(err))
+// 		return
+// 	}
+// }

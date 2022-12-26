@@ -35,3 +35,7 @@ type ForgotPasswordRequest struct {
 type UpdatePasswordRequest struct {
 	Password string `json:"password" binding:"required"`
 }
+
+type ResponseSuccess struct {
+	Success string `json:"success"`
+}
